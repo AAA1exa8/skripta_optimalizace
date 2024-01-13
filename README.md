@@ -8,6 +8,7 @@ Cílem těchto skript je vysvětlit běžné koncepty v optimalizaci a představ
 # Definice
 
 > Optimalizace v kontextu software je proces při kterém zvyšujeme efektivitu využití prostředků.
+> 
 > Prostředky jsou obvykle myšleny processor cycles nebo memory
 
 # Proč Optimalizujeme
@@ -18,7 +19,9 @@ Pokud jste přesvědčeni, že optimalizace má smysl, tak tuto část přeskoč
 - some idiot on the internet
 
 Rychlost našeho software má přímý dopad na UX koncového uživatele. Přes rychlost počítačů jsme schopni se špatně optimalizovaným kódem vytvořit pomalé a zasekané aplikace. 
+
 React aplikace bez optimalizace bude od určité komplexity bude provádět zbytečné rerenders DOM. To je případ aplikace v high level jazyce běžící ve web browseru na desktopovém operačním systému. Fakt že tato aplikace vůbec běží, je výsledkem obrovského množství optimalizace react projektu, browser engines, V8 runtime a samozřejmě vašeho operačního systému.
+
 Zároveň v dnešní době často budete používat FaaS, Paas nebo IaaS účtující si pouze za zdroje které používáte. Pokud používáte méně zdrojů platíte méně.
 
 # Proč je kód pomalý?
@@ -50,6 +53,7 @@ Dále uvedené techniky řeší výše uvedené problémy. Nebudu se věnovat op
 
 Pro vybrání nejlepší datové struktury idealní datové struktury je nejlepší v svém řešení postupně vyzkoušet všechny struktury, které připadají v úvahu.
 Zde ukážu případ kde je Vector lepší v situaci v které by většina lidí očekávala že bude LinkedLIst lepší
+
 (probléím je vzatý z keynote od Bjarne Stroustrup na GoingNative 2012 na téme proč jsou linked struktury špatné pro performance [link](https://www.youtube.com/watch?v=YQs6IC-vgmo))
 Problém vypadá takto:
 1. Vygeneruj N náhodných čísel a postupně je vkládej do kolekce tak aby byly vždy v pořadí. Pokud vygenerujeme 5 1 4 2 dostaneme:
@@ -63,6 +67,7 @@ Problém vypadá takto:
 	 - 1 4
 	 - 4
 3. Pro jaké N je lepší použít linked list radši než vector 
+
 Většina programátorů by očekávala že linked list bude pro situaci v které probíhá tak velké množství insercí a mazání elementů mnohem lepší. Co se ale z výsledku následujícího programu dozvíme že čas který musíme strávit realokacema vektoru je menší než čas strávený vyhledáváním kam má proběhnou inserce elementu do listu. V vektoru zjistíme kam insertnout v $O(log(n))$ zatímco v listu $O(n)$ protože linkedlist nedovoluje random access. Zároveň s linked list máme mnohem více cache misses.
 
 ```rust
@@ -167,6 +172,7 @@ Toto je snippet z [[list/src/main.rs]]
 ### Vybrání rychlejšího aloritmu
 
 Rychlost algoritmu obvykle učujeme pomocí big O notace ($O(n)$, $O(n^2)$...) pokud víte že se dá $O()$ vašeho kódu snížit nebo že existuje algoritmus který dělát to samé s menším $O()$ tak je nejlepší ho otestovat že doopravdy vede k zvýšení výkonu a poté aplikovat.
+
 Zde dám jako příklad implementaci algoritmu minimax a alpha-beta pruning. Kde [minimax](https://en.wikipedia.org/wiki/Minimax) projde všechny možnosti do určité hloubky i kdyby tam možnost zaručeně vedla k výsledku co se nepoužije. Oproti tomu použiji [alpha-beta pruning](https://en.wikipedia.org/wiki/Alpha%E2%80%93beta_pruning). Minimax má časovou komplexitu $O(b^d)$ kde b je branching factor v každém kole hry a d je depth do kterého hru zkoumáme. Mezitím alpha-beta pruning časovou komplexitu sníží na $O(\sqrt{b^d})$.
 (toto je implementace minimaxu určená k hraní hry [kalaha](https://en.wikipedia.org/wiki/Kalah))
 
@@ -300,6 +306,7 @@ fn minimax(node: &Kalah, depth: u64, alpha: i32, beta: i32, maximizing_player: b
 ### Zvýšení efektivity algoritmu
 
 Toto je proces při kterém zmenšujeme množství toho co algoritmus dělá aniž bychom snížily časovou komplexitu. Tedy že vynecháváme zbytečnou práci.
+
 Ukázka této optimalizace je na problému z [Advent of Code 2022 den 6](https://adventofcode.com/2022/day/6) part 2 a kód je od [david-a-perez](https://gist.github.com/david-a-perez/067a126edf72bbca9325adaa8e53769a) (pokud se chcete dozvědět více o tomto kódu doporučuji toto [video](https://www.youtube.com/watch?v=U16RnpV48KQ)). Cílem je nalézt první pozici v stringu na které se nachází 14 různých charakterů.
 
 Toto je naivní implementace řešení
@@ -387,11 +394,15 @@ pub fn nerd_face(input: &[u8]) -> Option<usize> {
 
 Toto jsou optimalizace na úrovni assembly. Na dělání těchto optimalizací je potřeba hodně znalostí assembly a technologií které používáte.
 Zde jsou materiály pokud se o tématu chcete dozvědět více:
+
 https://www.youtube.com/watch?v=QGYvbsHDPxo
+
 https://www.youtube.com/watch?v=4LiP39gJuqE
+
 https://xuanwo.io/2023/04-rust-std-fs-slower-than-python/
 
 # Závěr
 
 Až na poslední techniku optimalizace jsou všechny tyto techinky možné v všech reálných jazycích. 
+
 Důležité je si uvědomit jeslti je potřeba váš kód optimalizovat a jestli neděláte premature optimization (pro více info se koukněte [zde](https://www.youtube.com/watch?v=tKbV6BpH-C8))
